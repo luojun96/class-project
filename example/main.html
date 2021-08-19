@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="default.css" />
+    <script type="text/javascript" src="./bundle.js"></script>
+    <title>Project</title>
+</head>
+
+<body onload="init()">
+    <div class="wrapper">
+        <div class="header">
+        </div>
+        <div class="main">
+            <div class="main_middle">
+                <iframe id="content" src="index.html" height="800px" width="760px" title="Content"></iframe>
+            </div>
+        </div>
+        <div class="footer">
+            <center><button onclick="scrollDown()"></button></center>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function scrollDown() {
+            var iframe = document.getElementById("content");
+            var childDocument = iframe.contentDocument ? iframe.contentDocument : iframe.contentWindow.document;
+            var oContent = childDocument.documentElement.children[1].children[0];
+
+            if (this.elementMap) {
+                if (this.iLocationIndex === undefined) {
+                    this.iLocationIndex = 0;
+                } else if (this.iLocationIndex < this.elementMap.size - 1) {
+                    this.iLocationIndex++;
+                }
+
+                var aElement = this.elementMap.get(this.iLocationIndex);
+                var element;
+                if (aElement) {
+                    for (element of aElement) {
+                        oContent.appendChild(element);
+                    }
+                    if (element) {
+                        element.scrollIntoView();
+                    }
+                }
+            }
+        }
+
+        function init() {
+            var iframe = document.getElementById("content");
+            var iIframeHeight = iframe.scrollHeight;
+            var childDocument = iframe.contentDocument ? iframe.contentDocument : iframe.contentWindow.document;
+
+            var aElements = [];
+            var elementMap = new Map();
+            var iElementIndex = 0;
+            var oHTMLCollection = childDocument.documentElement.children[1].children[0].children;
+            for (let index = 0; index < oHTMLCollection.length; index++) {
+                if (oHTMLCollection[index].nodeName === "HR") {
+                    elementMap.set(iElementIndex, aElements);
+                    aElements = [];
+                    iElementIndex++
+                } else {
+                    aElements.push(oHTMLCollection[index]);
+                }
+            }
+
+            this.elementMap = elementMap;
+
+            for (let i = oHTMLCollection.length; i--;) {
+                if (oHTMLCollection[i]) {
+                    oHTMLCollection[i].remove();
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
